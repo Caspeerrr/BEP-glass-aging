@@ -9,8 +9,9 @@ def read_data(fileName, particles, dimensions, dt, iterations, dump_interval):
 
     size = int((iterations / dump_interval) + 1)
 
-    # array of timesteps in which the position of all atoms can be found
+    # array of timesteps in which the position and forces of all atoms can be found
     posData = np.zeros((size, particles, dimensions))
+    forceData = np.zeros((size, particles, dimensions))
     timesteps = np.arange(0, size)
 
     f = open(fileName, "r")
@@ -32,15 +33,12 @@ def read_data(fileName, particles, dimensions, dt, iterations, dump_interval):
             line = line.split(' ')
 
             particleId = int(line[0]) - 1
-            x = float(line[2])
-            y = float(line[3])
+            position = np.array([line[2 + i] for i in range(dimensions)])
+            force = np.array([line[2 + dimensions + i] for i in range(dimensions)])
 
-            if dimensions == 3:
-                z = float(line[4])
-                posData[timestep, particleId] = np.array([x, y, z])
-            else:
-                posData[timestep, particleId] = np.array([x, y])
+            posData[timestep, particleId] = position
+            forceData[timestep, particleId] = force
 
         i += 1
 
-    return posData, timesteps
+    return posData, forceData, timesteps
