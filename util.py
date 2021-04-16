@@ -1,5 +1,6 @@
 import numpy as np
 import numpy.linalg as linalg
+from progress.bar import Bar
 
 """
 msd(posData): mean square displacement (dynamic property)
@@ -14,7 +15,7 @@ def msd(posData):
     """
 
     posZero = posData[0]
-    f = lambda x: np.square(linalg.norm(x - posZero, axis=2))
+    f = lambda x: linalg.norm(x - posZero, axis=2)**2
     msd = np.mean(f(posData), axis=1)
 
     print('Mean square displacement calculated...')
@@ -27,10 +28,10 @@ def vsd(posData, msd):
     """
 
     posZero = posData[0]
-    f = lambda x: linalg.norm(x-posZero, axis=2)** 4
+    f = lambda x: linalg.norm(x-posZero, axis=2)**4
     variance = np.mean(f(posData), axis=1) - msd**2
 
-    print('Variance calculated...')
+    print('Variance square displacement calculated...')
     return variance
 
 
@@ -42,8 +43,9 @@ def mnn_distance(posData):
     nn_distance = np.zeros(len(posData))
     N = len(posData[0])
 
+    bar = Bar('calc. mnn distance..', max=N)
+
     for timestep, timestepPos in enumerate(posData):
-        
         nn = [np.inf] * N
         
         # calculate the top diagonal of the distance matrix
@@ -58,8 +60,9 @@ def mnn_distance(posData):
 
         # calculate the mean of the nearest neighbour distance
         nn_distance[timestep] = np.mean(nn)
-
-    print('Mean nearest neighbor distance calculated...')
+        bar.next()
+    
+    bar.finish()
     return nn_distance
 
 
@@ -67,12 +70,15 @@ def vnn_distance(posData, mnn_distance):
     """
     calculates the variance of the nearest neighbour distance
     """
+    
 
     nn_distance = np.zeros(len(posData))
     N = len(posData[0])
 
+    bar = Bar('calc. vnn distance..', max=N)
+
     for timestep, timestepPos in enumerate(posData):
-        
+        print('timestep ', timestep, 'of the ', N)
         nn = [np.inf] * N
         
         # calculate the top diagonal of the distance matrix
@@ -86,8 +92,9 @@ def vnn_distance(posData, mnn_distance):
                 nn[j] = min(nn[j], distance)
 
         nn_distance[timestep] = np.mean(nn) - np.square(mnn_distance[timestep])
-    
-    print('Variance nearest neighbor distance calculated...')
+        bar.next()
+        
+    bar.finish()
     return nn_distance
 
 
