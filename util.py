@@ -43,7 +43,7 @@ def mnn_distance(posData):
     nn_distance = np.zeros(len(posData))
     N = len(posData[0])
 
-    bar = Bar('calc. mnn distance..', max=N)
+    bar = Bar('calc. mnn distance..', max=len(posData))
 
     for timestep, timestepPos in enumerate(posData):
         nn = [np.inf] * N
@@ -75,7 +75,7 @@ def vnn_distance(posData, mnn_distance):
     nn_distance = np.zeros(len(posData))
     N = len(posData[0])
 
-    bar = Bar('calc. vnn distance..', max=N)
+    bar = Bar('calc. vnn distance..', max=len(posData))
 
     for timestep, timestepPos in enumerate(posData):
         print('timestep ', timestep, 'of the ', N)
@@ -93,7 +93,7 @@ def vnn_distance(posData, mnn_distance):
 
         nn_distance[timestep] = np.mean(nn) - np.square(mnn_distance[timestep])
         bar.next()
-        
+
     bar.finish()
     return nn_distance
 
