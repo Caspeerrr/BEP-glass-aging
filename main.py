@@ -25,11 +25,21 @@ vsd = vsd(Data['position'], msd)
 mnn_distance = mnn_distance(Data['position'])
 vnn_distance = vnn_distance(Data['position'], mnn_distance)
 
-# calculate the mean and variance of the norm of the forces
+# calculate the mean and variance of the norm of the force
 mean_force = calc_mean(Data['force'])
-variance_force = calc_mean(Data['force'])
+variance_force = calc_variance(Data['force'], mean_force)
 
-features = np.column_stack([mnn_distance, vnn_distance, mean_force, variance_force])
+# calculate the mean and variance of the norm of the angular momentum
+mean_angMom = calc_mean(Data['angMom'])
+variance_angMom = calc_variance(Data['angMom'], mean_angMom)
+
+# calculate the mean and variance of the norm of the torque
+mean_torque = calc_mean(Data['torque'])
+variance_torque = calc_variance(Data['torque'], mean_torque)
+
+features = np.column_stack([mnn_distance, vnn_distance, mean_force, variance_force,
+                            mean_angMom, variance_angMom, mean_torque, variance_torque
+                            ])
 
 linear_regression(features, timesteps, test_ratio=0.2)
 
@@ -39,4 +49,8 @@ visualise(timesteps, Mean_square_displacement=msd,
                      Mean_nearest_neighbour_distance=mnn_distance, 
                      Variance_nearest_neighbour_distance=vnn_distance, 
                      Mean_force=mean_force, 
-                     Variance_force=variance_force)
+                     Variance_force=variance_force,
+                     Mean_angular_momentum=mean_angMom,
+                     Variance_angular_momentum=variance_angMom,
+                     Mean_torque=mean_torque,
+                     Variance_torque=variance_torque)
