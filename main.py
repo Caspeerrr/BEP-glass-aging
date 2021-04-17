@@ -4,7 +4,6 @@ from visualise import *
 from ML import *
 import time
 import matplotlib.pyplot as plt
-import pandas as pd
 
 
 # initialization
@@ -15,33 +14,24 @@ iterations = 100000
 dump_interval = 1000
 
 # get the positions of each particle for each timestep
-timesteps, Data = read_data('traj_dump.atom', particles, dimensions, dt, iterations, dump_interval)
+timesteps, Data = read_data('traj_dump100000.atom', particles, dimensions, dt, iterations, dump_interval)
 
 # get the mean square displacement and the variance square displacement of the position data
 msd = msd(Data['position'])
 vsd = vsd(Data['position'], msd)
 
 # calculate the mean and variance nearest neighbour distance per timestep
-mnn_distance = mnn_distance(Data['position'])
-vnn_distance = vnn_distance(Data['position'], mnn_distance)
+mnn_distance, mnn_amount = mean_nn(Data['position'], 1)
+
+vnn_distance, vnn_amount  = variance_nn(Data['position'], mnn_distance, mnn_amount, 1)
 
 # calculate the mean and variance of the norm of the force
 mean_force = calc_mean(Data['force'])
 variance_force = calc_variance(Data['force'], mean_force)
 
-# calculate the mean and variance of the norm of the angular momentum
-mean_angMom = calc_mean(Data['angMom'])
-variance_angMom = calc_variance(Data['angMom'], mean_angMom)
+features = np.column_stack([mnn_distance, vnn_distance, mean_force, variance_force, mnn_amount, vnn_amount])
 
-# calculate the mean and variance of the norm of the torque
-mean_torque = calc_mean(Data['torque'])
-variance_torque = calc_variance(Data['torque'], mean_torque)
-
-features = np.column_stack([mnn_distance, vnn_distance, mean_force, variance_force,
-                            mean_angMom, variance_angMom, mean_torque, variance_torque
-                            ])
-
-linear_regression(features, timesteps, test_ratio=0.2)
+linear_regression(features, timesteps, test_ratio=0.33)
 
 # simple plot for the features
 visualise(timesteps, Mean_square_displacement=msd,
@@ -50,7 +40,6 @@ visualise(timesteps, Mean_square_displacement=msd,
                      Variance_nearest_neighbour_distance=vnn_distance, 
                      Mean_force=mean_force, 
                      Variance_force=variance_force,
-                     Mean_angular_momentum=mean_angMom,
-                     Variance_angular_momentum=variance_angMom,
-                     Mean_torque=mean_torque,
-                     Variance_torque=variance_torque)
+                     Mean_nearest_neighbour_amount=mnn_amount,
+                     Variance_nearest_neighbour_amount=vnn_amount
+                     )

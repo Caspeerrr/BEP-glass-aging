@@ -36,50 +36,60 @@ def vsd(posData, msd):
     return variance
 
 
-def mnn_distance(posData):
+def mean_nn(posData, cutoff):
     """
-    calculates the mean nearest neighbour distance
+    calculates the mean nearest neighbour distance and the mean amount
+    of neighbours within the cutoff
     """
-
     nn_distance = np.zeros(len(posData))
+    nn_amount = np.zeros(len(posData))
     N = len(posData[0])
 
     bar = Bar('calc. mnn distance..', max=len(posData))
 
     for timestep, timestepPos in enumerate(posData):
         nn = [np.inf] * N
+        nn2 = [0] * N
         
         # calculate the top diagonal of the distance matrix
-        for index, pos in enumerate(timestepPos):
-            for index2, pos2 in enumerate(timestepPos[:index]):
+        for i, pos in enumerate(timestepPos):
+            for j, pos2 in enumerate(timestepPos[:i]):
 
                 # calculate the distance between index1 and index2
                 distance = linalg.norm(pos - pos2)
 
-                nn[index] = min(nn[index], distance)
-                nn[index2] = min(nn[index2], distance)
+                if distance < cutoff:
+                    nn2[i] += 1
+                    nn2[j] += 1
+
+                nn[i] = min(nn[i], distance)
+                nn[j] = min(nn[j], distance)
+        
 
         # calculate the mean of the nearest neighbour distance
         nn_distance[timestep] = np.mean(nn)
+        nn_amount[timestep] = np.mean(nn2)
         bar.next()
     
     bar.finish()
-    return nn_distance
+    return nn_distance, nn_amount
 
-
-def vnn_distance(posData, mnn_distance):
+def variance_nn(posData, mnn_distance, mnn_amount, cutoff):
     """
     calculates the variance of the nearest neighbour distance
     """
     
 
     nn_distance = np.zeros(len(posData))
+    nn_amount = np.zeros(len(posData))
     N = len(posData[0])
 
     bar = Bar('calc. vnn distance..', max=len(posData))
 
     for timestep, timestepPos in enumerate(posData):
         nn = [np.inf] * N
+        nn2 = [0] * N
+
         
         # calculate the top diagonal of the distance matrix
         for i, pos in enumerate(timestepPos):
@@ -88,14 +98,21 @@ def vnn_distance(posData, mnn_distance):
                 # calculate the squared distance between particles i and j
                 distance = np.square(linalg.norm(pos - pos2))
 
+                if distance < cutoff:
+                    nn2[i] += 1
+                    nn2[j] += 1
+
+
                 nn[i] = min(nn[i], distance)
                 nn[j] = min(nn[j], distance)
 
         nn_distance[timestep] = np.mean(nn) - np.square(mnn_distance[timestep])
+        nn_amount[timestep] = np.mean(np.square(nn2)) - np.square(mnn_amount[timestep])
+
         bar.next()
 
     bar.finish()
-    return nn_distance
+    return nn_distance, nn_amount
 
 
 def calc_mean(Data):
