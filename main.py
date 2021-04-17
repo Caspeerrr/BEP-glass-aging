@@ -34,4 +34,9 @@ features = np.column_stack([mnn_distance, vnn_distance, mean_force, variance_for
 linear_regression(features, timesteps, test_ratio=0.2)
 
 # simple plot for the features
-visualise(timesteps, Data)
+visualise(timesteps, Mean_square_displacement=msd,
+                     Variance_square_displacement=vsd, 
+                     Mean_nearest_neighbour_distance=mnn_distance, 
+                     Variance_nearest_neighbour_distance=vnn_distance, 
+                     Mean_force=mean_force, 
+                     Variance_force=variance_force)

@@ -1,12 +1,12 @@
 import matplotlib.pyplot as plt
 
 
-def visualise(timesteps, Data): 
+def visualise(timesteps, **kwargs): 
     """
     visualises the data found
     """
 
-    for key, value in Data.items():
+    for key, value in kwargs.items():
 
         plt.scatter(timesteps, value)
         plt.xlabel('timesteps')
