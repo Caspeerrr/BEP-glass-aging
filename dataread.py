@@ -13,9 +13,6 @@ def read_data(fileName, particles, dimensions, dt, iterations, dump_interval):
     # array of timesteps in which the position and forces of all atoms can be found
     posData = np.zeros((size, particles, dimensions))
     forceData = np.zeros((size, particles, dimensions))
-    dipMom_or = np.zeros((size, particles, dimensions))
-    dipMom_mag = np.zeros((size, particles, 1))
-    charge = np.zeros((size, particles, 1))
     angMom = np.zeros((size, particles, dimensions))
     torque = np.zeros((size, particles, dimensions))
 
@@ -45,17 +42,11 @@ def read_data(fileName, particles, dimensions, dt, iterations, dump_interval):
             # position, force, dipole moment orientation, dipole moment magnitude, charge, angular momentum, torque
             position = np.array([line[2 + i] for i in range(dimensions)])
             force = np.array([line[2 + dimensions + i] for i in range(dimensions)])
-            mu_xy = np.array([line[2 + 2*dimensions + i] for i in range(dimensions)])
-            mu_mag = np.array([line[2 + 3*dimensions]])
-            q = np.array([line[3 + 3*dimensions]])
-            L = np.array([line[4 + 3*dimensions + i] for i in range(dimensions)])
-            T = np.array([line[4 + 4*dimensions + i] for i in range(dimensions)])
+            L = np.array([line[2 + 2*dimensions + i] for i in range(dimensions)])
+            T = np.array([line[2 + 3*dimensions + i] for i in range(dimensions)])
 
             posData[timestep, particleId] = position
             forceData[timestep, particleId] = force
-            dipMom_or[timestep, particleId] = mu_xy
-            dipMom_mag[timestep, particleId] = mu_mag
-            charge[timestep, particleId] = q
             angMom[timestep, particleId] = L
             torque[timestep, particleId] = T
 
@@ -64,9 +55,6 @@ def read_data(fileName, particles, dimensions, dt, iterations, dump_interval):
 
     return timesteps, {'position': posData, 
                        'force': forceData, 
-                       'dipMom_or': dipMom_or,
-                       'dipMom_mag': dipMom_mag,
-                       'charge': charge,
                        'angMom': angMom, 
                        'torque': torque
                        }
