@@ -2,6 +2,7 @@ import numpy as np
 import numpy.linalg as linalg
 from progress.bar import Bar
 
+
 """
 msd(posData): mean square displacement (dynamic property)
 vsd(posData, msd): variance square displacement (dynamic property)
@@ -78,7 +79,6 @@ def vnn_distance(posData, mnn_distance):
     bar = Bar('calc. vnn distance..', max=len(posData))
 
     for timestep, timestepPos in enumerate(posData):
-        print('timestep ', timestep, 'of the ', N)
         nn = [np.inf] * N
         
         # calculate the top diagonal of the distance matrix
