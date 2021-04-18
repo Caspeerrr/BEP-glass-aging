@@ -6,15 +6,28 @@ import time
 import matplotlib.pyplot as plt
 
 
+Linear_regression = False
+Binary_classification = True
+
 # initialization
 particles  = 1000
 dimensions = 2
 dt = 0.0001
-iterations = 100000
+iterations = 5000000
 dump_interval = 1000
 
 # get the positions of each particle for each timestep
-timesteps, Data = read_data('traj_dump100000.atom', particles, dimensions, dt, iterations, dump_interval)
+timesteps, Data = read_data('traj_dump.atom', particles, dimensions, dt, iterations, dump_interval)
+
+if Binary_classification:
+    # take the first and last 20 percent of the data for the binary classifier
+    m = int(0.2*len(timesteps))
+    timesteps = np.concatenate(np.zeros(m), np.ones(m))
+
+    # convert data
+    Data_binary = np.array(list(Data.values()))
+    Data = np.concatenate(Data_binary[:, :m], Data_binary[:, m:])
+    Data = {'position': Data[0], 'force': Data[1], 'angMom': Data[2], 'torque': Data[3]}
 
 # get the mean square displacement and the variance square displacement of the position data
 msd = msd(Data['position'])
@@ -31,8 +44,12 @@ variance_force = calc_variance(Data['force'], mean_force)
 
 features = np.column_stack([mnn_distance, vnn_distance, mean_force, variance_force, mnn_amount, vnn_amount])
 
-linear_regression(features, timesteps, test_ratio=0.33)
+if Linear_regression:
+    linear_regression(features, timesteps, test_ratio=0.2)
 
+if Binary_classification:
+    logistic_regression(features, timesteps, test_ratio=0.2)
+    
 # simple plot for the features
 visualise(timesteps, Mean_square_displacement=msd,
                      Variance_square_displacement=vsd, 
@@ -43,3 +60,6 @@ visualise(timesteps, Mean_square_displacement=msd,
                      Mean_nearest_neighbour_amount=mnn_amount,
                      Variance_nearest_neighbour_amount=vnn_amount
                      )
+
+# Binary classifier
+
