@@ -22,11 +22,11 @@ timesteps, Data = read_data('traj_dump.atom', particles, dimensions, dt, iterati
 if Binary_classification:
     # take the first and last 20 percent of the data for the binary classifier
     m = int(0.2*len(timesteps))
-    timesteps = np.concatenate(np.zeros(m), np.ones(m))
+    timesteps = np.concatenate((np.zeros(m), np.ones(m)))
 
     # convert data
     Data_binary = np.array(list(Data.values()))
-    Data = np.concatenate(Data_binary[:, :m], Data_binary[:, m:])
+    Data = np.concatenate((Data_binary[:, :m], Data_binary[:, -m:]), axis=1)
     Data = {'position': Data[0], 'force': Data[1], 'angMom': Data[2], 'torque': Data[3]}
 
 # get the mean square displacement and the variance square displacement of the position data
