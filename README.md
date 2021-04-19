@@ -14,14 +14,12 @@ the measures quantities and the values are the corresponding data of that featur
 
 - util.py <br>
 consists of various utilization functions used on the data:
-<ul>
-<li>msd: calculates the mean square displacement for each timestep
-<li>vsd: calculates the variance square displacement for each timestep
-<li>mnn_distance: calculates the mean nearest neighbour distance
-<li>vnn_distance: calculates the variance of the nearest neighbour distance
-<li>calc_mean: calculates the mean of the norm of the vector per timestep
-<li>calc_variance: calculates the variance of the norm of the vector per timestep
-</ul>
+    * msd: calculates the mean square displacement for each timestep
+    * vsd: calculates the variance square displacement for each timestep
+    * mnn_distance: calculates the mean nearest neighbour distance
+    * vnn_distance: calculates the variance of the nearest neighbour distance
+    * calc_mean: calculates the mean of the norm of the vector per timestep
+    * calc_variance: calculates the variance of the norm of the vector per timestep
 
 - visualise.py <br>
 functions:
