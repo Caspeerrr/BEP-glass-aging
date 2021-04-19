@@ -52,9 +52,4 @@ def read_data(fileName, particles, dimensions, dt, iterations, dump_interval):
 
         i += 1
 
-
-    return timesteps, {'position': posData, 
-                       'force': forceData, 
-                       'angMom': angMom, 
-                       'torque': torque
-                       }
+    return timesteps, np.array([posData, forceData, angMom, torque])
