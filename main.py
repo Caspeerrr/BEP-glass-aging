@@ -15,13 +15,13 @@ Visualisation = False
 particles  = 1000
 dimensions = 2
 dt = 0.0001
-iterations = 100000
+iterations = 5000000
 dump_interval = 1000
 
 #------------------------ DATA PREPARATION --------------------------
 
 # get the positions of each particle for each timestep
-timesteps, Data = read_data('traj_dump100000.atom', particles, dimensions, dt, iterations, dump_interval)
+timesteps, Data = read_data('traj_dump.atom', particles, dimensions, dt, iterations, dump_interval)
 
 if Binary_classification:
 
