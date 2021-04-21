@@ -27,8 +27,8 @@ if Linear_regression:
 
 if Binary_classification:
     
-    timesteps1, types1, Data1 = read_data('traj_dump_young.atom', particles, dimensions, dt, 50000, 50)
-    rdf = calc_cutoff(Data1[0], types1)
+    # timesteps1, types1, Data1 = read_data('traj_dump_young.atom', particles, dimensions, dt, 50000, 50)
+    # rdf = calc_cutoff(Data1[0], types1)
 
     timesteps2, types2, Data2 = read_data('traj_dump_old.atom', particles, dimensions, dt, 1000000, 1000)
 

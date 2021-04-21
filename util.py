@@ -14,7 +14,7 @@ calc_rdf(pos, pType): radial distribution function for a single timestep
 """
 
 
-def distance(posA, posB):
+def calc_distance(posA, posB):
     """
     calculates the distances between two particles taking the periodic boundary
     into consideration
@@ -79,7 +79,7 @@ def mean_nn(posData, cutoff):
             for j, pos2 in enumerate(timestepPos[:i]):
 
                 # calculate the distance between index1 and index2
-                distance = distance(pos, pos2)
+                distance = calc_distance(pos, pos2)
 
                 if distance < cutoff:
                     nn2[i] += 1
@@ -119,7 +119,7 @@ def variance_nn(posData, mnn_distance, mnn_amount, cutoff):
             for j, pos2 in enumerate(timestepPos[:i]):
                 
                 # calculate the squared distance between particles i and j
-                distance = np.square(distance(pos, pos2))
+                distance = np.square(calc_distance(pos, pos2))
 
                 if distance < cutoff:
                     nn2[i] += 1
