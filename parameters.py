@@ -15,7 +15,7 @@ dr = 0.02
 # cutoffs for Q6
 r_cutoff_yp = 1.06          # r cutoff for a young and passive glass
 r_cutoff_op = 0             # r cutoff for an old and passive glass
-r_cutoff_ya = 0             # r cutoff for a young and active glass
+r_cutoff_ya = 1.06          # r cutoff for a young and active glass (cutoff young: (53, 86, 43))
 r_cutoff_oa = 0             # r cutoff for an old and active glass
 
 # ML parameters
