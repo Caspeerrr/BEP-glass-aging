@@ -2,33 +2,45 @@ from dataread import read_data
 from util import *
 from visualise import *
 from ML import *
+from calc_rdf import *
 import time
 import matplotlib.pyplot as plt
 
 
 #------------------------ INITIALIZATION ---------------------------
 
-Linear_regression = True
-Binary_classification = False
+Linear_regression = False
+Binary_classification = True
 Visualisation = False
 
 particles  = 1000
 dimensions = 2
 dt = 0.0001
-iterations = 5000000
+iterations = 100000
 dump_interval = 1000
 
 #------------------------ DATA PREPARATION --------------------------
 
-# get the positions of each particle for each timestep
-timesteps, Data = read_data('traj_dump.atom', particles, dimensions, dt, iterations, dump_interval)
+if Linear_regression:
+    # get the positions of each particle for each timestep
+    timesteps, types, Data = read_data('traj_dump100000.atom', particles, dimensions, dt, iterations, dump_interval)
 
 if Binary_classification:
+    
+    timesteps1, types1, Data1 = read_data('traj_dump_young.atom', particles, dimensions, dt, 50000, 50)
+    rdf = calc_cutoff(Data1[0], types1)
 
-    # take the first and last 20 percent of the data for the binary classifier
-    m = int(0.2*len(timesteps))
-    timesteps = np.concatenate((np.zeros(m), np.ones(m)))
-    Data = np.concatenate((Data[:, :m], Data[:, -m:]), axis=1)
+    timesteps2, types2, Data2 = read_data('traj_dump_old.atom', particles, dimensions, dt, 1000000, 1000)
+
+    rdf = calc_cutoff(Data2[0], types2)
+
+    # create binary classes for young and old
+    timesteps1[timesteps1] = 0
+    timesteps2[timesteps2] = 1
+
+    timesteps = np.concatenate((timesteps1, timesteps2))
+    Data = np.concatenate((Data1, Data2), axis=1)
+
 
 # convert to dictionary
 Data = {'position': Data[0], 'force': Data[1], 'angMom': Data[2], 'torque': Data[3]}
@@ -36,9 +48,9 @@ Data = {'position': Data[0], 'force': Data[1], 'angMom': Data[2], 'torque': Data
 
 #------------------------ FEATURE EXTRACTION -------------------------
 
-# get the mean square displacement and the variance square displacement of the position data
-msd = msd(Data['position'])
-vsd = vsd(Data['position'], msd)
+# get the mean square displacement and the variance square displacement of the position data (deprecated)
+# msd = msd(Data['position'])
+# vsd = vsd(Data['position'], msd)
 
 # calculate the mean and variance nearest neighbour distance per timestep
 mnn_distance, mnn_amount = mean_nn(Data['position'], 1)
@@ -48,9 +60,10 @@ vnn_distance, vnn_amount  = variance_nn(Data['position'], mnn_distance, mnn_amou
 mean_force = calc_mean(Data['force'])
 variance_force = calc_variance(Data['force'], mean_force)
 
+# TODO calculate the radial distribution function
+
 # prepare features in single array
 features = np.column_stack([mnn_distance, vnn_distance, mean_force, variance_force, mnn_amount, vnn_amount])
-
 
 #------------------------ PREDICTION ------------------------------
 

@@ -1,14 +1,37 @@
 import numpy as np
 import numpy.linalg as linalg
 from progress.bar import Bar
+import matplotlib.pyplot as plt
 
 
 """
+distance(posA, posB): distance between particle A and particle B
 msd(posData): mean square displacement (dynamic property)
 vsd(posData, msd): variance square displacement (dynamic property)
 mnn_distance(posData): mean nearest neighbour distance (static property)
 vnn_distance(posData, mnn_distance): variance nearest neighbour distance (static property)
+calc_rdf(pos, pType): radial distribution function for a single timestep
 """
+
+
+def distance(posA, posB):
+    """
+    calculates the distances between two particles taking the periodic boundary
+    into consideration
+    """
+
+    L = 28.9
+
+    # calculate the distance vector
+    r1 = abs(posA - posB)
+
+    # periodic boundary condition
+    r2 = abs(r1 - L)
+    r = np.amin([r1, r2], axis=0) 
+
+    r = linalg.norm(r)
+    return r
+
 
 def msd(posData):
     """
@@ -56,7 +79,7 @@ def mean_nn(posData, cutoff):
             for j, pos2 in enumerate(timestepPos[:i]):
 
                 # calculate the distance between index1 and index2
-                distance = linalg.norm(pos - pos2)
+                distance = distance(pos, pos2)
 
                 if distance < cutoff:
                     nn2[i] += 1
@@ -96,7 +119,7 @@ def variance_nn(posData, mnn_distance, mnn_amount, cutoff):
             for j, pos2 in enumerate(timestepPos[:i]):
                 
                 # calculate the squared distance between particles i and j
-                distance = np.square(linalg.norm(pos - pos2))
+                distance = np.square(distance(pos, pos2))
 
                 if distance < cutoff:
                     nn2[i] += 1
@@ -135,3 +158,114 @@ def calc_variance(Data, mean):
 
     print('Variance calculated...')
     return variance
+
+
+def calc_rdf(pos, pType):
+    """
+    calculates the radial distribution function
+    @param :pos: position of all the particles in a single timestep
+    @param :pType: list of particle types, 1 or 2
+    """
+
+    # box length and width
+    Lx, Ly = 28.9, 28.9
+
+    rmax      = 5
+    dr        = 0.02
+    r         = np.arange(0,rmax+dr,dr)
+    N         = len(pos)
+    NR        = len(r)
+    grAA      = np.zeros((NR, 1))
+    grBB      = np.zeros((NR, 1))
+    grAB      = np.zeros((NR, 1))
+
+    iA = np.where(pType==1)[0]
+    iB = np.where(pType==2)[0]
+    NA = len(iA)
+    NB = len(iB)
+
+    for i in range(N):
+        for j in range(i+1, N):
+            
+            rx = abs(pos[i, 0] - pos[j, 0])
+            ry = abs(pos[i, 1] - pos[j, 1])
+                 
+            # periodic boundary conditions --> rij = min( rij, abs(rij-L) )
+            if rx > 0.5*Lx:
+                rx = abs(rx - Lx)
+            if ry > 0.5*Ly:
+                ry = abs(ry - Ly)
+
+            r = np.sqrt(rx**2 + ry**2)
+
+            if r <= rmax:
+                igr = round(r/dr)
+
+                if i in iA and j in iA:
+                    grAA[igr] = grAA[igr] + 2
+                elif i in iB and j in iB:
+                    grBB[igr] = grBB[igr] + 2
+                else:
+                    grAB[igr] = grAB[igr] + 1
+
+    # normalize
+    A         = Lx * Ly
+    dr2       = np.zeros((NR,1))
+
+    for ir in range(NR):
+        rlow    = ir*dr
+        rup     = rlow + dr
+        dr2[ir] = rup**2 - rlow**2
+
+    nidealA   = np.pi * dr2 * (NA*NA/A)            # g(r) for ideal gas of A particles
+    nidealB   = np.pi * dr2 * (NB*NB/A)            # g(r) for ideal gas of B particles
+    nidealAB  = np.pi * dr2 * (NA*NB/A)            # g(r) for ideal gas of A+B particles
+
+    grAA_norm = grAA / nidealA
+    grBB_norm = grBB / nidealB
+    grAB_norm = grAB / nidealAB
+
+    return grAA_norm, grBB_norm, grAB_norm
+
+
+def calc_cutoff(posData, types):
+    """
+    calculates the cutoff parameter r based on the radial 
+    distribution function
+    """
+
+    rmax      = 5
+    dr        = 0.02
+    r         = np.arange(0,rmax+dr,dr)
+    N         = len(posData[0])
+    NR        = len(r)
+    grAA      = np.zeros((NR, 1))
+    grBB      = np.zeros((NR, 1))
+    grAB      = np.zeros((NR, 1))
+    i = 0
+
+    for pos_t, type_t in zip(posData, types):
+        i +=1
+        print(i)
+
+        grAAt, grBBt, grABt = calc_rdf(pos_t, type_t)
+        grAA += grAAt
+        grBB += grBBt
+        grAB += grABt
+
+    grAA /= len(posData)
+    grBB /= len(posData)
+    grAB /= len(posData)
+
+    plt.plot(r, grAA)
+    plt.title('grAA')
+    plt.show()
+    plt.plot(r, grBB)
+    plt.title('grBB')
+    plt.show()
+    plt.plot(r, grAB)
+    plt.title('grAB')
+    plt.show()
+
+
+        
