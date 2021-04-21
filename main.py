@@ -8,8 +8,8 @@ from parameters import *
 
 #------------------------ INITIALIZATION ---------------------------
 
-Linear_regression = False
-Binary_classification = True
+Linear_regression = True
+Binary_classification = False
 Visualisation = False
 
 iterations = 100000
@@ -19,7 +19,7 @@ dump_interval = 1000
 
 if Linear_regression:
     # get the positions of each particle for each timestep
-    timesteps, types, Data = read_data('traj_dump100000.atom', iterations, dump_interval)
+    timesteps, types, Data = read_data('traj_dump.atom', iterations, dump_interval)
 
 if Binary_classification:
     
@@ -60,13 +60,11 @@ features = np.column_stack([mnn_distance, vnn_distance, mean_force, variance_for
 
 #------------------------ PREDICTION ------------------------------
 
-test_ratio = 0.2
-
 if Linear_regression:
     # second degree polynomial regression
-    linear_regression(features, timesteps, test_ratio, 2)
+    linear_regression(features, timesteps, test_ratio, degree=2)
     # third degree polynomial regression
-    linear_regression(features, timesteps, test_ratio, 3)
+    linear_regression(features, timesteps, test_ratio, degree=3)
 
 if Binary_classification:
     logistic_regression(features, timesteps, test_ratio)
