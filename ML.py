@@ -14,14 +14,14 @@ Machine learning methods available:
 """
 
 
-def linear_regression(X, y, test_ratio):
+def linear_regression(X, y, test_ratio, degree):
 
     # standardize features with z-score
     scaler = StandardScaler()
     X = scaler.fit_transform(X)
 
     # second degree polynomial
-    poly = PolynomialFeatures(2)
+    poly = PolynomialFeatures(degree)
     X = poly.fit_transform(X)
     print(poly.get_feature_names())
     # print(poly.get_params())

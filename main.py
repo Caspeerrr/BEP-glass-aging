@@ -2,7 +2,7 @@ from dataread import read_data
 from util import *
 from visualise import *
 from ML import *
-from calc_rdf import *
+# from calc_rdf import *
 import time
 import matplotlib.pyplot as plt
 
@@ -64,11 +64,16 @@ features = np.column_stack([mnn_distance, vnn_distance, mean_force, variance_for
 
 #------------------------ PREDICTION ------------------------------
 
+test_ratio = 0.2
+
 if Linear_regression:
-    linear_regression(features, timesteps, test_ratio=0.2)
+    # second degree polynomial regression
+    linear_regression(features, timesteps, test_ratio, 2)
+    # third degree polynomial regression
+    linear_regression(features, timesteps, test_ratio, 3)
 
 if Binary_classification:
-    logistic_regression(features, timesteps, test_ratio=0.2)
+    logistic_regression(features, timesteps, test_ratio)
     
 if Visualisation:
     visualise(timesteps, Mean_square_displacement=msd,
