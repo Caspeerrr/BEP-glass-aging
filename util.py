@@ -2,6 +2,7 @@ import numpy as np
 import numpy.linalg as linalg
 from progress.bar import Bar
 import matplotlib.pyplot as plt
+from parameters import *
 
 
 """
@@ -66,13 +67,12 @@ def mean_nn(posData, cutoff):
     """
     nn_distance = np.zeros(len(posData))
     nn_amount = np.zeros(len(posData))
-    N = len(posData[0])
 
     bar = Bar('calc. mnn distance..', max=len(posData))
 
     for timestep, timestepPos in enumerate(posData):
-        nn = [np.inf] * N
-        nn2 = [0] * N
+        nn = [np.inf] * particles
+        nn2 = [0] * partciles
         
         # calculate the top diagonal of the distance matrix
         for i, pos in enumerate(timestepPos):
@@ -105,13 +105,12 @@ def variance_nn(posData, mnn_distance, mnn_amount, cutoff):
 
     nn_distance = np.zeros(len(posData))
     nn_amount = np.zeros(len(posData))
-    N = len(posData[0])
 
     bar = Bar('calc. vnn distance..', max=len(posData))
 
     for timestep, timestepPos in enumerate(posData):
-        nn = [np.inf] * N
-        nn2 = [0] * N
+        nn = [np.inf] * particles
+        nn2 = [0] * particles
 
         
         # calculate the top diagonal of the distance matrix
@@ -167,13 +166,8 @@ def calc_rdf(pos, pType):
     @param :pType: list of particle types, 1 or 2
     """
 
-    # box length and width
-    Lx, Ly = 28.9, 28.9
 
-    rmax      = 5
-    dr        = 0.02
     r         = np.arange(0,rmax+dr,dr)
-    N         = len(pos)
     NR        = len(r)
     grAA      = np.zeros((NR, 1))
     grBB      = np.zeros((NR, 1))
@@ -184,8 +178,8 @@ def calc_rdf(pos, pType):
     NA = len(iA)
     NB = len(iB)
 
-    for i in range(N):
-        for j in range(i+1, N):
+    for i in range(particles):
+        for j in range(i+1, particles):
             
             rx = abs(pos[i, 0] - pos[j, 0])
             ry = abs(pos[i, 1] - pos[j, 1])
@@ -209,7 +203,6 @@ def calc_rdf(pos, pType):
                     grAB[igr] = grAB[igr] + 1
 
     # normalize
-    A         = Lx * Ly
     dr2       = np.zeros((NR,1))
 
     for ir in range(NR):
@@ -244,15 +237,15 @@ def calc_rdf_peaks(posData, types):
         grAA, grBB, grAB = calc_rdf(pos_t, type_t)
 
         # calculate the argmax corresponding to the first peak for grAA and grAB
-        grAA[t] = np.argmax(grAA)
-        grBB[t] = np.argmax(grBB)
-        grAB[t] = np.argmax(grAB)
+        grAA_amax[t] = np.argmax(grAA)
+        grBB_amax[t] = np.argmax(grBB)
+        grAB_amax[t] = np.argmax(grAB)
 
         bar.next()
 
     bar.finish()
     
-    return grAA, grBB, grAB
+    return grAA_amax, grBB_amax, grAB_amax
 
 
 def calc_cutoff(posData, types):
@@ -261,10 +254,7 @@ def calc_cutoff(posData, types):
     distribution function
     """
 
-    rmax      = 5
-    dr        = 0.02
     r         = np.arange(0,rmax+dr,dr)
-    N         = len(posData[0])
     NR        = len(r)
     grAA      = np.zeros((NR, 1))
     grBB      = np.zeros((NR, 1))

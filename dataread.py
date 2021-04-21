@@ -1,8 +1,9 @@
 import numpy as np
 import pandas as pd
+from parameters import *
 
 
-def read_data(fileName, particles, dimensions, dt, iterations, dump_interval):
+def read_data(fileName, iterations, dump_interval):
     """
     reads a .atom file and returns the particles 3 dimensional position
     per timestep in a numpy array

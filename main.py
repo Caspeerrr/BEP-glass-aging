@@ -2,8 +2,8 @@ from dataread import read_data
 from util import *
 from visualise import *
 from ML import *
-import time
 import matplotlib.pyplot as plt
+from parameters import *
 
 
 #------------------------ INITIALIZATION ---------------------------
@@ -12,9 +12,6 @@ Linear_regression = False
 Binary_classification = True
 Visualisation = False
 
-particles  = 1000
-dimensions = 2
-dt = 0.0001
 iterations = 100000
 dump_interval = 1000
 
@@ -22,12 +19,12 @@ dump_interval = 1000
 
 if Linear_regression:
     # get the positions of each particle for each timestep
-    timesteps, types, Data = read_data('traj_dump100000.atom', particles, dimensions, dt, iterations, dump_interval)
+    timesteps, types, Data = read_data('traj_dump100000.atom', iterations, dump_interval)
 
 if Binary_classification:
     
-    timesteps1, types1, Data1 = read_data('traj_dump_young.atom', particles, dimensions, dt, 50000, 50)
-    timesteps2, types2, Data2 = read_data('traj_dump_old.atom', particles, dimensions, dt, 1000000, 1000)
+    timesteps1, types1, Data1 = read_data('traj_dump_young.atom', 50000, 50)
+    timesteps2, types2, Data2 = read_data('traj_dump_old.atom', 1000000, 1000)
 
     # create binary classes for young and old
     timesteps1[timesteps1] = 0
