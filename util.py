@@ -224,8 +224,35 @@ def calc_rdf(pos, pType):
     grAA_norm = grAA / nidealA
     grBB_norm = grBB / nidealB
     grAB_norm = grAB / nidealAB
+    r         = np.arange(0,rmax+dr,dr)
+
 
     return grAA_norm, grBB_norm, grAB_norm
+
+def calc_rdf_peaks(posData, types):
+    """
+    calculates the radial distribution function peak for AA, AB and BB.
+    Only for AA and AB does this value also correspond to the first peak
+    """
+
+    grAA_amax, grBB_amax, grAB_amax = np.zeros(len(posData))
+
+    bar = Bar('calc. rdf peaks..', max=len(posData))
+
+    for t, pos_t, type_t in zip(len(posData), posData, types):
+
+        grAA, grBB, grAB = calc_rdf(pos_t, type_t)
+
+        # calculate the argmax corresponding to the first peak for grAA and grAB
+        grAA[t] = np.argmax(grAA)
+        grBB[t] = np.argmax(grBB)
+        grAB[t] = np.argmax(grAB)
+
+        bar.next()
+
+    bar.finish()
+    
+    return grAA, grBB, grAB
 
 
 def calc_cutoff(posData, types):
@@ -242,11 +269,8 @@ def calc_cutoff(posData, types):
     grAA      = np.zeros((NR, 1))
     grBB      = np.zeros((NR, 1))
     grAB      = np.zeros((NR, 1))
-    i = 0
 
     for pos_t, type_t in zip(posData, types):
-        i +=1
-        print(i)
 
         grAAt, grBBt, grABt = calc_rdf(pos_t, type_t)
         grAA += grAAt
@@ -257,15 +281,4 @@ def calc_cutoff(posData, types):
     grBB /= len(posData)
     grAB /= len(posData)
 
-    plt.plot(r, grAA)
-    plt.title('grAA')
-    plt.show()
-    plt.plot(r, grBB)
-    plt.title('grBB')
-    plt.show()
-    plt.plot(r, grAB)
-    plt.title('grAB')
-    plt.show()
-
-
-        
+    return np.argmax(grAA), np.argmax(grBB), np.argmax(grAB)

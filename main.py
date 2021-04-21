@@ -27,18 +27,15 @@ if Linear_regression:
 
 if Binary_classification:
     
-    # timesteps1, types1, Data1 = read_data('traj_dump_young.atom', particles, dimensions, dt, 50000, 50)
-    # rdf = calc_cutoff(Data1[0], types1)
-
+    timesteps1, types1, Data1 = read_data('traj_dump_young.atom', particles, dimensions, dt, 50000, 50)
     timesteps2, types2, Data2 = read_data('traj_dump_old.atom', particles, dimensions, dt, 1000000, 1000)
-
-    rdf = calc_cutoff(Data2[0], types2)
 
     # create binary classes for young and old
     timesteps1[timesteps1] = 0
     timesteps2[timesteps2] = 1
 
     timesteps = np.concatenate((timesteps1, timesteps2))
+    types = np.concatenate((types1, types2))
     Data = np.concatenate((Data1, Data2), axis=1)
 
 
@@ -60,10 +57,10 @@ vnn_distance, vnn_amount  = variance_nn(Data['position'], mnn_distance, mnn_amou
 mean_force = calc_mean(Data['force'])
 variance_force = calc_variance(Data['force'], mean_force)
 
-# TODO calculate the radial distribution function
+grAA, grBB, grAB = calc_rdf_peaks(Data['position'], types)
 
 # prepare features in single array
-features = np.column_stack([mnn_distance, vnn_distance, mean_force, variance_force, mnn_amount, vnn_amount])
+features = np.column_stack([mnn_distance, vnn_distance, mean_force, variance_force, mnn_amount, vnn_amount, grAA, grBB])
 
 #------------------------ PREDICTION ------------------------------
 

@@ -9,8 +9,6 @@ def read_data(fileName, particles, dimensions, dt, iterations, dump_interval):
     """
 
     size = int((iterations / dump_interval) + 1)
-    print(size)
-
 
     # array of timesteps in which the position and forces of all atoms can be found
     posData = np.zeros((size, particles, dimensions))
