@@ -9,6 +9,8 @@ def read_data(fileName, particles, dimensions, dt, iterations, dump_interval):
     """
 
     size = int((iterations / dump_interval) + 1)
+    print(size)
+
 
     # array of timesteps in which the position and forces of all atoms can be found
     posData = np.zeros((size, particles, dimensions))
@@ -17,6 +19,7 @@ def read_data(fileName, particles, dimensions, dt, iterations, dump_interval):
     torque = np.zeros((size, particles, dimensions))
 
     timesteps = np.arange(0, size)
+    types = np.zeros((size, particles))
 
 
     f = open(fileName, "r")
@@ -30,7 +33,9 @@ def read_data(fileName, particles, dimensions, dt, iterations, dump_interval):
 
         # get the timestep value
         if i == 1:
-            timestep = int((int(line) - iterations) / dump_interval)            
+            timestep = int(int(line) / dump_interval)
+            if timestep > 1000:
+                print(line)
 
         # skip first 8 lines for each timestep
         if i > 8:
@@ -38,6 +43,7 @@ def read_data(fileName, particles, dimensions, dt, iterations, dump_interval):
             line = line.split(' ')
 
             particleId = int(line[0]) - 1
+            types[timestep, particleId] = int(line[1])
 
             # position, force, dipole moment orientation, dipole moment magnitude, charge, angular momentum, torque
             position = np.array([line[2 + i] for i in range(dimensions)])
@@ -52,4 +58,4 @@ def read_data(fileName, particles, dimensions, dt, iterations, dump_interval):
 
         i += 1
 
-    return timesteps, np.array([posData, forceData, angMom, torque])
+    return timesteps, types, np.array([posData, forceData, angMom, torque])
