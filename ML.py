@@ -20,7 +20,7 @@ def linear_regression(X, y, test_ratio, degree):
     scaler = StandardScaler()
     X = scaler.fit_transform(X)
 
-    # second degree polynomial
+    # get polynomial features
     poly = PolynomialFeatures(degree)
     X = poly.fit_transform(X)
     print(poly.get_feature_names())

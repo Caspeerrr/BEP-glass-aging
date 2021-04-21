@@ -2,7 +2,6 @@ from dataread import read_data
 from util import *
 from visualise import *
 from ML import *
-# from calc_rdf import *
 import time
 import matplotlib.pyplot as plt
 
