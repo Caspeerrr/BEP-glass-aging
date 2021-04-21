@@ -2,9 +2,10 @@ import numpy as np
 from sklearn.linear_model import LinearRegression
 from sklearn.linear_model import LogisticRegression
 from sklearn.model_selection import train_test_split
-from sklearn.preprocessing import StandardScaler
+from sklearn.preprocessing import StandardScaler, PolynomialFeatures
 from sklearn.metrics import precision_score, recall_score
 from sklearn import linear_model
+
 
 """
 Machine learning methods available:
@@ -19,14 +20,26 @@ def linear_regression(X, y, test_ratio):
     scaler = StandardScaler()
     X = scaler.fit_transform(X)
 
+    # second degree polynomial
+    poly = PolynomialFeatures(2)
+    X = poly.fit_transform(X)
+    print(poly.get_feature_names())
+    # print(poly.get_params())
+
     # divide in training and test set and predict
     X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=test_ratio, random_state=42)
     clf = linear_model.Lasso(alpha=0.1).fit(X_train, y_train)
     pred = clf.predict(X_test).astype(int)
 
     print('Coefficients: ', clf.coef_)
+    print('Parameters:', clf.get_params())
     print('Predicted age: ', pred)
     print('Real age: ', y_test)
+
+    R2_test = clf.score(X_test, y_test)
+    R2_train = clf.score(X_train, y_train)
+    print('R2 training set:', R2_train)
+    print('R2 test set:', R2_test)
 
 
 def logistic_regression(X, y, test_ratio):
