@@ -50,7 +50,7 @@ def logistic_regression(X, y, test_ratio):
 
     # divide in training and test set and predict
     X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=test_ratio, random_state=42)
-    clf = LogisticRegression(penalty='l2').fit(X_train, y_train)
+    clf = LogisticRegression(penalty='l1').fit(X_train, y_train)
     pred = clf.predict(X_test)
     prob = clf.predict_proba(X_test)
 
