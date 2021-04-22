@@ -260,12 +260,18 @@ def calc_cutoff(posData, types):
     grBB      = np.zeros((NR, 1))
     grAB      = np.zeros((NR, 1))
 
+    bar = Bar('calc. rdf peaks..', max=len(posData))
+
     for pos_t, type_t in zip(posData, types):
 
         grAAt, grBBt, grABt = calc_rdf(pos_t, type_t)
         grAA += grAAt
         grBB += grBBt
         grAB += grABt
+
+        bar.next()
+
+    bar.finish()
 
     grAA /= len(posData)
     grBB /= len(posData)
