@@ -19,12 +19,12 @@ dump_interval = 1000
 
 if Linear_regression:
     # get the positions of each particle for each timestep
-    timesteps, types, Data = read_data('traj_dump.atom', iterations, dump_interval)
+    timesteps, types, q6_re, q6_im, Data = read_data('traj_dump.atom', iterations, dump_interval)
 
 if Binary_classification:
     
-    timesteps1, types1, Data1 = read_data('traj_dump_young.atom', 50000, 50)
-    timesteps2, types2, Data2 = read_data('traj_dump_old.atom', 1000000, 1000)
+    timesteps1, types1, q6_re1, q6_im1, Data1 = read_data('traj_dump_young.atom', 50000, 50)
+    timesteps2, types2, q6_re2, q6_im2, Data2 = read_data('traj_dump_old.atom', 1000000, 1000)
 
     # create binary classes for young and old
     timesteps1[timesteps1] = 0
@@ -33,10 +33,12 @@ if Binary_classification:
     timesteps = np.concatenate((timesteps1, timesteps2))
     types = np.concatenate((types1, types2))
     Data = np.concatenate((Data1, Data2), axis=1)
+    q6_re = np.concatenate((q6_re1, q6_re2))
+    q6_im = np.concatenate((q6_im1, q6_im2))
 
 
 # convert to dictionary
-Data = {'position': Data[0], 'force': Data[1], 'angMom': Data[2], 'torque': Data[3]}
+Data = {'position': Data[0], 'force': Data[1], 'q6_re': q6_re, 'q6_im': q6_im}
 
 
 #------------------------ FEATURE EXTRACTION -------------------------

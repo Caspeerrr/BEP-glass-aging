@@ -14,8 +14,8 @@ def read_data(fileName, iterations, dump_interval):
     # array of timesteps in which the position and forces of all atoms can be found
     posData = np.zeros((size, particles, dimensions))
     forceData = np.zeros((size, particles, dimensions))
-    angMom = np.zeros((size, particles, dimensions))
-    torque = np.zeros((size, particles, dimensions))
+    q6_Re = np.zeros((size, particles, 1))
+    q6_Im = np.zeros((size, particles, 1))
 
     timesteps = np.arange(0, size)
     types = np.zeros((size, particles))
@@ -33,8 +33,6 @@ def read_data(fileName, iterations, dump_interval):
         # get the timestep value
         if i == 1:
             timestep = int(int(line) / dump_interval)
-            if timestep > 1000:
-                print(line)
 
         # skip first 8 lines for each timestep
         if i > 8:
@@ -47,14 +45,14 @@ def read_data(fileName, iterations, dump_interval):
             # position, force, dipole moment orientation, dipole moment magnitude, charge, angular momentum, torque
             position = np.array([line[2 + i] for i in range(dimensions)])
             force = np.array([line[2 + dimensions + i] for i in range(dimensions)])
-            L = np.array([line[2 + 2*dimensions + i] for i in range(dimensions)])
-            T = np.array([line[2 + 3*dimensions + i] for i in range(dimensions)])
+            qr_value = np.array([line[2 + 2*dimensions]])
+            qi_value = np.array([line[3 + 2*dimensions]])
 
             posData[timestep, particleId] = position
             forceData[timestep, particleId] = force
-            angMom[timestep, particleId] = L
-            torque[timestep, particleId] = T
+            q6_Re[timestep, particleId] = qr_value
+            q6_Im[timestep, particleId] = qi_value
 
         i += 1
 
-    return timesteps, types, np.array([posData, forceData, angMom, torque])
+    return timesteps, types, q6_Re, q6_Im, np.array([posData, forceData])
