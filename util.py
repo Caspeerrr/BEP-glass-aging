@@ -248,10 +248,9 @@ def calc_rdf_peaks(posData, types):
     return grAA_amax, grBB_amax, grAB_amax
 
 
-def calc_cutoff(posData, types):
+def calc_avg_rdf(posData, types):
     """
-    calculates the cutoff parameter r based on the radial 
-    distribution function
+    calculates the average rdf over all the timesteps
     """
 
     r         = np.arange(0,rmax+dr,dr)
@@ -277,4 +276,4 @@ def calc_cutoff(posData, types):
     grBB /= len(posData)
     grAB /= len(posData)
 
-    return np.argmax(grAA), np.argmax(grBB), np.argmax(grAB)
+    return grAA, grBB, grAB
