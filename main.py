@@ -3,13 +3,15 @@ from util import *
 from visualise import *
 from ML import *
 import matplotlib.pyplot as plt
+from data_process import *
 from parameters import *
+import os
 
 
 #------------------------ INITIALIZATION ---------------------------
 
-Linear_regression = True
-Binary_classification = False
+Linear_regression = False
+Binary_classification = True
 Visualisation = False
 
 iterations = 100000
@@ -17,48 +19,46 @@ dump_interval = 1000
 
 #------------------------ DATA PREPARATION --------------------------
 
-if Linear_regression:
-    # get the positions of each particle for each timestep
-    timesteps, types, q6_re, q6_im, Data = read_data('traj_dump.atom', iterations, dump_interval)
+features = []
+timesteps = []
+
 
 if Binary_classification:
-    
-    timesteps1, types1, q6_re1, q6_im1, Data1 = read_data('traj_dump_young.atom', 50000, 50)
-    timesteps2, types2, q6_re2, q6_im2, Data2 = read_data('traj_dump_old.atom', 1000000, 1000)
+    # iterate through all dump files    
+    for file in os.listdir(os.fsencode(".\\dump\\young\\")):
+        filename = os.fsdecode(file)
+        if filename.endswith(".YOUNG"): 
 
-    # create binary classes for young and old
-    timesteps1[timesteps1] = 0
-    timesteps2[timesteps2] = 1
+            featuresNew = extract_features(".\\dump\\young\\", filename, 50000, 50)[0]
+            timestepsNew = np.zeros(len(featuresNew))
 
-    timesteps = np.concatenate((timesteps1, timesteps2))
-    types = np.concatenate((types1, types2))
-    Data = np.concatenate((Data1, Data2), axis=1)
-    q6_re = np.concatenate((q6_re1, q6_re2))
-    q6_im = np.concatenate((q6_im1, q6_im2))
+            features.append(featuresNew)
+            timesteps.extend(timestepsNew)
+
+    # iterate through all dump files    
+    for file in os.listdir(os.fsencode(".\\dump\\old\\")):
+        filename = os.fsdecode(file)
+        if filename.endswith(".OLD"): 
+
+            featuresNew = extract_features(".\\dump\\old\\", filename, 1000000, 1000)[0]
+            timestepsNew = np.zeros(len(featuresNew))
+
+            features.append(featuresNew)
+            timesteps.extend(timestepsNew)
 
 
-# convert to dictionary
-Data = {'position': Data[0], 'force': Data[1], 'q6_re': q6_re, 'q6_im': q6_im}
+if Linear_regression:
 
+    # iterate through all dump files    
+    for file in os.listdir(os.fsencode(".\\dump\\full\\")):
+        filename = os.fsdecode(file)
+        if filename.endswith(".ATOM"): 
 
-#------------------------ FEATURE EXTRACTION -------------------------
+            featuresNew = extract_features(".\\dump\\full\\", filename, 5000000, 1000)[0]
+            timestepsNew = np.zeros(len(featuresNew))
 
-# get the mean square displacement and the variance square displacement of the position data (deprecated)
-# msd = msd(Data['position'])
-# vsd = vsd(Data['position'], msd)
-
-# calculate the mean and variance nearest neighbour distance per timestep
-mnn_distance, mnn_amount = mean_nn(Data['position'], 1)
-vnn_distance, vnn_amount  = variance_nn(Data['position'], mnn_distance, mnn_amount, 1)
-
-# calculate the mean and variance of the norm of the force
-mean_force = calc_mean(Data['force'])
-variance_force = calc_variance(Data['force'], mean_force)
-
-grAA, grBB, grAB = calc_rdf_peaks(Data['position'], types)
-
-# prepare features in single array
-features = np.column_stack([mnn_distance, vnn_distance, mean_force, variance_force, mnn_amount, vnn_amount, grAA, grBB])
+            features.append(featuresNew)
+            timesteps.extend(timestepsNew)
 
 #------------------------ PREDICTION ------------------------------
 

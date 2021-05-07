@@ -11,9 +11,9 @@ iterations = 50000
 dump_interval = 50
 
 rdf = True
-q6 = True
-directory = ".\\dump\\old\\"
-extension = ".OLD"
+q6 = False
+directory = ".\\dump\\young\\"
+extension = ".YOUNG"
 
 amount = 0
 
@@ -21,16 +21,19 @@ amount = 0
 for file in os.listdir(os.fsencode(directory)):
      filename = os.fsdecode(file)
      if filename.endswith(extension): 
-        
+
+        savename = './/saves//' + filename.split(".")[0] + '-rdf.npy'
+
         # retrieve and process data
         timesteps, types, q6_re, q6_im, Data = read_data(directory + filename, iterations, dump_interval)
-        Data = {'position': Data[0], 'force': Data[1], 'q6_re': q6_re, 'q6_im': q6_im}
+        Data = {'position': Data[0, :1], 'force': Data[1], 'q6_re': q6_re, 'q6_im': q6_im}
+        types = types[:1]
 
         # declare variable for the first run
         if amount == 0:
             
             if rdf:
-                gr = calc_avg_rdf(Data['position'], types)
+                gr = save_load(lambda: calc_avg_rdf(Data['position'], types), savename)
 
             if q6:
                 mean_q6 = np.asarray((calc_mean(Data['q6_re']), calc_mean(Data['q6_im'])))
@@ -38,7 +41,7 @@ for file in os.listdir(os.fsencode(directory)):
 
         else:
             if rdf:
-                gr += np.asarray((calc_avg_rdf(Data['position'], types)))
+                gr += save_load(lambda: calc_avg_rdf(Data['position'], types), savename)
 
             if q6:
                 mean_q6 += np.asarray((calc_mean(Data['q6_re']), calc_mean(Data['q6_im'])))
@@ -48,20 +51,12 @@ for file in os.listdir(os.fsencode(directory)):
 
 # visualise the found averages
 if rdf:
+
     gr /= amount
     r = np.arange(0,rmax+dr,dr)
-    plt.plot(r, gr[0])
-    plt.title('grAA')
-    plt.xlabel('r')
-    plt.show()
-    plt.plot(r, gr[1])
-    plt.title('grBB')
-    plt.xlabel('r')
-    plt.show()
-    plt.plot(r, gr[2])
-    plt.title('grAB')
-    plt.xlabel('r')
-    plt.show()
+    plot_rdf(r, gr[0], 'grAA')
+    plot_rdf(r, gr[1], 'grBB')
+    plot_rdf(r, gr[2], 'grAB')
 
 if q6:
     mean_q6 /= amount

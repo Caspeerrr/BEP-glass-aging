@@ -72,7 +72,7 @@ def mean_nn(posData, cutoff):
 
     for timestep, timestepPos in enumerate(posData):
         nn = [np.inf] * particles
-        nn2 = [0] * partciles
+        nn2 = [0] * particles
         
         # calculate the top diagonal of the distance matrix
         for i, pos in enumerate(timestepPos):
@@ -277,3 +277,31 @@ def calc_avg_rdf(posData, types):
     grAB /= len(posData)
 
     return grAA, grBB, grAB
+
+
+def plot_rdf(r, gr, title):
+    """
+    plots a radial distribution function
+    """
+    plt.plot(r, gr)
+    plt.title(title)
+    plt.xlabel('r')
+    plt.ylabel('gr')
+    plt.show()
+
+
+def save_load(func, savename):
+    """
+    tries to load the given funcion from npy files, if it is not there
+    run the function
+    """
+    try:
+        with open(savename, 'rb') as f:
+            result = np.load(f)
+            print('Feature loaded..')
+    except:
+        result = np.asarray(func())
+        with open(savename, 'wb') as f:
+            np.save(f, result)
+
+    return result
