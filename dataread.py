@@ -1,6 +1,6 @@
 import numpy as np
 import pandas as pd
-from parameters import *
+from init import *
 
 
 def read_data(fileName, iterations, dump_interval):

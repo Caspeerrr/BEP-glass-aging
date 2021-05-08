@@ -4,7 +4,7 @@ from visualise import *
 from ML import *
 import matplotlib.pyplot as plt
 from data_process import *
-from parameters import *
+from init import *
 import os
 
 

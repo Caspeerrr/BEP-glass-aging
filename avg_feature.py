@@ -4,7 +4,7 @@ from util import *
 from visualise import *
 from ML import *
 import matplotlib.pyplot as plt
-from parameters import *
+from init import *
 
 
 iterations = 50000

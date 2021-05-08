@@ -2,7 +2,7 @@ import numpy as np
 import numpy.linalg as linalg
 from progress.bar import Bar
 import matplotlib.pyplot as plt
-from parameters import *
+from init import *
 
 
 """
