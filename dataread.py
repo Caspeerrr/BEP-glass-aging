@@ -12,13 +12,13 @@ def read_data(fileName, iterations, dump_interval):
     size = int((iterations / dump_interval) + 1)
 
     # array of timesteps in which the position and forces of all atoms can be found
-    posData = np.zeros((size, particles, dimensions))
-    forceData = np.zeros((size, particles, dimensions))
-    q6_Re = np.zeros((size, particles, 1))
-    q6_Im = np.zeros((size, particles, 1))
+    posData = np.zeros((size, params['particles'], params['dimensions']))
+    forceData = np.zeros((size, params['particles'], params['dimensions']))
+    q6_Re = np.zeros((size, params['particles'], 1))
+    q6_Im = np.zeros((size, params['particles'], 1))
 
     timesteps = np.arange(0, size)
-    types = np.zeros((size, particles))
+    types = np.zeros((size, params['particles']))
 
 
     f = open(fileName, "r")
@@ -43,10 +43,10 @@ def read_data(fileName, iterations, dump_interval):
             types[timestep, particleId] = int(line[1])
 
             # position, force, dipole moment orientation, dipole moment magnitude, charge, angular momentum, torque
-            position = np.array([line[2 + i] for i in range(dimensions)])
-            force = np.array([line[2 + dimensions + i] for i in range(dimensions)])
-            qr_value = np.array([line[2 + 2*dimensions]])
-            qi_value = np.array([line[3 + 2*dimensions]])
+            position = np.array([line[2 + i] for i in range(params['dimensions'])])
+            force = np.array([line[2 + params['dimensions'] + i] for i in range(params['dimensions'])])
+            qr_value = np.array([line[2 + 2*params['dimensions']]])
+            qi_value = np.array([line[3 + 2*params['dimensions']]])
 
             posData[timestep, particleId] = position
             forceData[timestep, particleId] = force

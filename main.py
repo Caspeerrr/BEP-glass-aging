@@ -22,7 +22,6 @@ dump_interval = 1000
 features = []
 timesteps = []
 
-
 if Binary_classification:
     # iterate through all dump files    
     for file in os.listdir(os.fsencode(".\\dump\\young\\")):
@@ -41,7 +40,7 @@ if Binary_classification:
         if filename.endswith(".OLD"): 
 
             featuresNew = extract_features(".\\dump\\old\\", filename, 1000000, 1000)[0]
-            timestepsNew = np.zeros(len(featuresNew))
+            timestepsNew = np.ones(len(featuresNew))
 
             features.append(featuresNew)
             timesteps.extend(timestepsNew)
@@ -64,12 +63,12 @@ if Linear_regression:
 
 if Linear_regression:
     # second degree polynomial regression
-    linear_regression(features, timesteps, test_ratio, degree=2)
+    linear_regression(features, timesteps, params['test_ratio'], degree=2)
     # third degree polynomial regression
-    linear_regression(features, timesteps, test_ratio, degree=3)
+    linear_regression(features, timesteps, params['test_ratio'], degree=3)
 
 if Binary_classification:
-    logistic_regression(features, timesteps, test_ratio)
+    logistic_regression(features, timesteps, params['test_ratio'])
     
 if Visualisation:
     visualise(timesteps, Mean_square_displacement=msd,

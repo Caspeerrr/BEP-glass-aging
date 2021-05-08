@@ -71,8 +71,8 @@ def mean_nn(posData, cutoff):
     bar = Bar('calc. mnn distance..', max=len(posData))
 
     for timestep, timestepPos in enumerate(posData):
-        nn = [np.inf] * particles
-        nn2 = [0] * particles
+        nn = [np.inf] * params['particles']
+        nn2 = [0] * params['particles']
         
         # calculate the top diagonal of the distance matrix
         for i, pos in enumerate(timestepPos):
@@ -109,8 +109,8 @@ def variance_nn(posData, mnn_distance, mnn_amount, cutoff):
     bar = Bar('calc. vnn distance..', max=len(posData))
 
     for timestep, timestepPos in enumerate(posData):
-        nn = [np.inf] * particles
-        nn2 = [0] * particles
+        nn = [np.inf] * params['particles']
+        nn2 = [0] * params['particles']
 
         
         # calculate the top diagonal of the distance matrix
@@ -166,7 +166,9 @@ def calc_rdf(pos, pType):
     @param :pType: list of particle types, 1 or 2
     """
 
-
+    dr        = params['dr']
+    rmax      = params['rmax']
+    A         = params['A']
     r         = np.arange(0,rmax+dr,dr)
     NR        = len(r)
     grAA      = np.zeros((NR, 1))
@@ -178,8 +180,8 @@ def calc_rdf(pos, pType):
     NA = len(iA)
     NB = len(iB)
 
-    for i in range(particles):
-        for j in range(i+1, particles):
+    for i in range(params['particles']):
+        for j in range(i+1, params['particles']):
             
             rx = abs(pos[i, 0] - pos[j, 0])
             ry = abs(pos[i, 1] - pos[j, 1])
@@ -253,6 +255,8 @@ def calc_avg_rdf(posData, types):
     calculates the average rdf over all the timesteps
     """
 
+    dr        = params['dr']
+    rmax      = params['rmax']
     r         = np.arange(0,rmax+dr,dr)
     NR        = len(r)
     grAA      = np.zeros((NR, 1))

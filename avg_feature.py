@@ -53,7 +53,7 @@ for file in os.listdir(os.fsencode(directory)):
 if rdf:
 
     gr /= amount
-    r = np.arange(0,rmax+dr,dr)
+    r = np.arange(0, params['rmax'] + params['dr'], params['dr'])
     plot_rdf(r, gr[0], 'grAA')
     plot_rdf(r, gr[1], 'grBB')
     plot_rdf(r, gr[2], 'grAB')
