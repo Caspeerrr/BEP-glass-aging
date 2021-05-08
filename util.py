@@ -250,6 +250,29 @@ def calc_rdf_peaks(posData, types):
     return grAA_amax, grBB_amax, grAB_amax
 
 
+def calc_rdf_area(posData, types):
+
+    dr = params['dr']
+    grAA_area, grBB_area, grAB_area = np.zeros(len(posData))
+
+    bar = Bar('calc. rdf area..', max=len(posData))
+
+    for t, pos_t, type_t in zip(len(posData), posData, types):
+
+        grAA, grBB, grAB = calc_rdf(pos_t, type_t)
+
+        # calculate the area under the rdf graph per timestep
+        grAA_area[t] = np.sum(grAA * dr)
+        grBB_area[t] = np.sum(grBB * dr)
+        grAB_area[t] = np.sum(grAB * dr)
+
+        bar.next()
+
+    bar.finish()
+
+    return grAA_area, grBB_area, grAB_area
+
+
 def calc_avg_rdf(posData, types):
     """
     calculates the average rdf over all the timesteps
