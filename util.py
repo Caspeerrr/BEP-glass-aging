@@ -169,6 +169,8 @@ def calc_rdf(pos, pType):
     dr        = params['dr']
     rmax      = params['rmax']
     A         = params['A']
+    Lx        = params['Lx']
+    Ly        = params['Ly']
     r         = np.arange(0,rmax+dr,dr)
     NR        = len(r)
     grAA      = np.zeros((NR, 1))
@@ -299,7 +301,7 @@ def calc_avg_rdf(posData, types):
 
     bar.finish()
 
-    grAA /= len(posData)
+    grAA /= len(posData)    
     grBB /= len(posData)
     grAB /= len(posData)
 
