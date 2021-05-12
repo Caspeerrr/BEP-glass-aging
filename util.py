@@ -232,11 +232,11 @@ def calc_rdf_peaks(posData, types):
     Only for AA and AB does this value also correspond to the first peak
     """
 
-    grAA_amax, grBB_amax, grAB_amax = np.zeros(len(posData))
+    grAA_amax, grBB_amax, grAB_amax = np.zeros(len(posData)), np.zeros(len(posData)), np.zeros(len(posData))
 
     bar = Bar('calc. rdf peaks..', max=len(posData))
 
-    for t, pos_t, type_t in zip(len(posData), posData, types):
+    for t, pos_t, type_t in zip(range(len(posData)), posData, types):
 
         grAA, grBB, grAB = calc_rdf(pos_t, type_t)
 
@@ -251,15 +251,52 @@ def calc_rdf_peaks(posData, types):
     
     return grAA_amax, grBB_amax, grAB_amax
 
+def calc_rdf_minimum(posData, types):
+    """
+    calculates the radial distribution function minimum for AA, AB and BB.
+    """
+
+    grAA_amin, grBB_amin, grAB_amin = np.zeros(len(posData)), np.zeros(len(posData)), np.zeros(len(posData))
+
+    bar = Bar('calc. rdf minimum..', max=len(posData))
+
+    for t, pos_t, type_t in zip(range(len(posData)), posData, types):
+
+        grAA, grBB, grAB = calc_rdf(pos_t, type_t)
+
+        # calculate the argmax corresponding to the first peak for grAA and grAB
+        grAA_amax = np.argmax(grAA)
+        grBB_amax = np.argmax(grBB)
+        grAB_amax = np.argmax(grAB)
+
+        # reload the arrays but from the maximum index and further
+        grAA = grAA[grAA_amax:]
+        grBB = grBB[grBB_amax:]
+        grAB = grBB[grAB_amax:]
+
+        # calculate the argmin corresponding to the first minimum for grAA, grAB, grBB
+        grAA_amin[t] = np.argmin(grAA) + grAA_amax
+        grBB_amin[t] = np.argmin(grBB) + grBB_amax
+        grAB_amin[t] = np.argmin(grAB) + grAB_amax
+
+        bar.next()
+
+    bar.finish()
+    
+    return grAA_amin, grBB_amin, grAB_amin
+
 
 def calc_rdf_area(posData, types):
+    """
+    calculates the area under the radial distribution function for AA, AB and BB.
+    """
 
     dr = params['dr']
-    grAA_area, grBB_area, grAB_area = np.zeros(len(posData))
+    grAA_area, grBB_area, grAB_area = np.zeros(len(posData)), np.zeros(len(posData)), np.zeros(len(posData))
 
     bar = Bar('calc. rdf area..', max=len(posData))
 
-    for t, pos_t, type_t in zip(len(posData), posData, types):
+    for t, pos_t, type_t in zip(range(len(posData)), posData, types):
 
         grAA, grBB, grAB = calc_rdf(pos_t, type_t)
 
@@ -273,7 +310,6 @@ def calc_rdf_area(posData, types):
     bar.finish()
 
     return grAA_area, grBB_area, grAB_area
-
 
 def calc_avg_rdf(posData, types):
     """
