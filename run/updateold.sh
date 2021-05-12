@@ -1,0 +1,23 @@
+
+
+echo 'Press Q to stop generating data'
+echo
+# mpirun -np 4 lmp_mpi -in ./traj/quench.txt
+
+for filename in ../dump/old/*.OLD; do
+
+    TEMP="$(cut -d'-' -f2 <<<$filename)"
+    TEMP2="$(cut -d'-' -f3 <<<$filename)"
+    TEMP2="$(cut -d'.' -f1 <<<$TEMP2)"
+    NAME="traj_dump-${TEMP}-${TEMP2}.OLD"
+
+    sed -i -E "8s/[^ ]+/$TEMP/5" ../input-script/quench_old.txt
+    sed -i -E "9s/[^ ]+/$TEMP2/5" ../input-script/quench_old.txt
+    sed -i -E "19s/[^ ]+/$TEMP/5" ../input-script/quench_old.txt
+    sed -i -E "20s/[^ ]+/$TEMP/7" ../input-script/quench_old.txt
+    sed -i -E "26s/[^ ]+/$TEMP/7" ../input-script/quench_old.txt
+    sed -i -E "34s/[^ ]+/$NAME/6" ../input-script/quench_old.txt
+
+    ( cd ../dump/old ; mpirun -np 4 lmp_mpi -in ../../input-script/quench_old.txt )
+
+done
