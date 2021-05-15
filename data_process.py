@@ -36,11 +36,20 @@ def extract_features(directory, filename, iterations, dump_interval):
     mean_vor_amn = calc_mean(Data['vor_amn'])
     variance_vor_amn = calc_variance(Data['vor_amn'], mean_vor_amn)
 
+    # calculate the first two peaks of the voronoi area and voronoi amount
+    area_peak1_count, area_peak2_count,
+    area_peak1_mag, area_peak2_mag, 
+    amount_peak1_count, amount_peak2_count, 
+    amount_peak1_mag, amount_peak2_mag = calc_voronoi_peaks(timesteps)
 
     # prepare features in single array
     features = np.column_stack([mnn_distance, vnn_distance, mean_force, variance_force,
                                 mnn_amount, vnn_amount, mean_q6_re, variance_q6_re, mean_q6_im, 
                                 variance_q6_im, mean_vor_area, variance_vor_area, 
-                                mean_vor_amn, variance_vor_amn])
+                                mean_vor_amn, variance_vor_amn,
+                                area_peak1_count, area_peak2_count,
+                                area_peak1_mag, area_peak2_mag, 
+                                amount_peak1_count, amount_peak2_count, 
+                                amount_peak1_mag, amount_peak2_mag])
 
     return features
