@@ -62,7 +62,7 @@ def avg_voronoi(timestep):
 def plot_voronoi(timestep):
     """
     Plots histograms of the voronoi area and the amount of voronoi edges
-    for given timestep
+    for given timestep (averaged over all dump files)
     """
     
     voronoi_area, voronoi_amount = avg_voronoi(timestep)
