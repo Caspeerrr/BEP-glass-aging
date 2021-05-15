@@ -65,7 +65,7 @@ def plot_voronoi(timestep):
     for given timestep (averaged over all dump files)
     """
     
-    voronoi_area, voronoi_amount = avg_voronoi(timestep))
+    voronoi_area, voronoi_amount = avg_voronoi(timestep)
 
     plt.hist(voronoi_area, bins=20)
     plt.title("Voronoi area")

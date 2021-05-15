@@ -37,10 +37,7 @@ def extract_features(directory, filename, iterations, dump_interval):
     variance_vor_amn = calc_variance(Data['vor_amn'], mean_vor_amn)
 
     # calculate the magnitude and count of the max two peaks of the voronoi area and amount
-    area_peak1_count, area_peak2_count,
-    area_peak1_mag, area_peak2_mag,
-    amount_peak1_count, amount_peak2_count,
-    amount_peak1_mag, amount_peak2_mag = calc_voronoi_peaks(timesteps, vor_area, vor_amn)
+    area_peak1_count, area_peak2_count, area_peak1_mag, area_peak2_mag, amount_peak1_count, amount_peak2_count, amount_peak1_mag, amount_peak2_mag = calc_voronoi_peaks(timesteps, vor_area, vor_amn)
 
     # prepare features in single array
     features = np.column_stack([mnn_distance, vnn_distance, mean_force, variance_force,
