@@ -3,8 +3,6 @@ import numpy.linalg as linalg
 from progress.bar import Bar
 import matplotlib.pyplot as plt
 from init import *
-from avg_voronoi import *
-
 
 """
 distance(posA, posB): distance between particle A and particle B
@@ -355,53 +353,6 @@ def plot_rdf(r, gr, title):
     plt.ylabel('gr')
     plt.show()
 
-# def calc_voronoi_peaks(timesteps):
-#     """
-#     Calculates the magnitude and count of the first two peaks of the voronoi area 
-#     histogram and of the amount of voronoi edges histogram for each timestep. Returns
-#     these in numpy arrays for all timesteps.
-#     """
-
-#     area_peak1_count, area_peak2_count = np.zeros(len(timesteps)), np.zeros(len(timesteps))
-#     area_peak1_mag, area_peak2_mag = np.zeros(len(timesteps)), np.zeros(len(timesteps))
-#     amount_peak1_count, amount_peak2_count = np.zeros(len(timesteps)), np.zeros(len(timesteps))
-#     amount_peak1_mag, amount_peak2_mag = np.zeros(len(timesteps)), np.zeros(len(timesteps))
-
-#     for timestep in timesteps:
-
-#         voronoi_area, voronoi_amount = avg_voronoi(timestep)
-
-#         # save the first two peaks attributes of the voronoi area
-#         values, bins, _ = plt.hist(voronoi_area, bins=20)
-#         order = np.argsort(values)[::-1]
-
-#         area_peak1_count_t, area_peak2_count_t = values[order][:2])
-#         area_peak1_mag_t, area_peak2_mag_t = bins[i] + (bins[i+1] - bins[i])/2 for i in order[:2]
-
-#         area_peak1_count[timestep] = area_peak1_count_t
-#         area_peak2_count[timestep] = area_peak2_count_t
-#         area_peak1_mag[timestep] = area_peak1_mag_t
-#         area_peak2_mag[timestep] = area_peak2_mag_t
-
-#         # print("2 highest bins:", values[order][:2])
-#         # print("  their x values:", [ bins[i] + (bins[i+1] - bins[i])/2 for i in order[:2]])
-
-#         # save the first two peaks attributes of the amount of voronoi edges
-#         values, bins, _ = plt.hist(voronoi_amount, bins=10)
-#         order = np.argsort(values)[::-1]
-
-#         amount_peak1_count_t, amount_peak2_count_t = values[order][:2])
-#         amount_peak1_mag_t, amount_peak2_mag_t = bins[i] + (bins[i+1] - bins[i])/2 for i in order[:2]
-
-#         amount_peak1_count[timestep] = amount_peak1_count_t
-#         amount_peak2_count[timestep] = amount_peak2_count_t
-#         amount_peak1_mag[timestep] = amount_peak1_mag_t
-#         amount_peak2_mag[timestep] = amount_peak2_mag_t
-
-#     return area_peak1_count, area_peak2_count,
-#            area_peak1_mag, area_peak2_mag, 
-#            amount_peak1_count, amount_peak2_count, 
-#            amount_peak1_mag, amount_peak2_mag
 
 def calc_voronoi_peaks(timesteps, vor_area, vor_amn):
     """
@@ -424,7 +375,7 @@ def calc_voronoi_peaks(timesteps, vor_area, vor_amn):
         order = np.argsort(values)[::-1]
 
         area_peak1_count_t, area_peak2_count_t = values[order][:2]
-        area_peak1_mag_t, area_peak2_mag_t = bins[i] + (bins[i+1] - bins[i])/2 for i in order[:2]
+        area_peak1_mag_t, area_peak2_mag_t = [bins[i] + (bins[i+1] - bins[i])/2 for i in order[:2]]
 
         area_peak1_count[timestep] = area_peak1_count_t
         area_peak2_count[timestep] = area_peak2_count_t
@@ -435,18 +386,15 @@ def calc_voronoi_peaks(timesteps, vor_area, vor_amn):
         values, bins, _ = plt.hist(voronoi_amount, bins=10)
         order = np.argsort(values)[::-1]
 
-        amount_peak1_count_t, amount_peak2_count_t = values[order][:2])
-        amount_peak1_mag_t, amount_peak2_mag_t = bins[i] + (bins[i+1] - bins[i])/2 for i in order[:2]
+        amount_peak1_count_t, amount_peak2_count_t = values[order][:2]
+        amount_peak1_mag_t, amount_peak2_mag_t = [bins[i] + (bins[i+1] - bins[i])/2 for i in order[:2]]
 
         amount_peak1_count[timestep] = amount_peak1_count_t
         amount_peak2_count[timestep] = amount_peak2_count_t
         amount_peak1_mag[timestep] = amount_peak1_mag_t
         amount_peak2_mag[timestep] = amount_peak2_mag_t
 
-    return area_peak1_count, area_peak2_count,
-           area_peak1_mag, area_peak2_mag, 
-           amount_peak1_count, amount_peak2_count, 
-           amount_peak1_mag, amount_peak2_mag
+    return area_peak1_count, area_peak2_count, area_peak1_mag, area_peak2_mag, amount_peak1_count, amount_peak2_count, amount_peak1_mag, amount_peak2_mag
 
 
 def save_load(func, savename):
