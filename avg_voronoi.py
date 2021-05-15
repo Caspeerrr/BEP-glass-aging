@@ -16,7 +16,7 @@ def avg_voronoi(timestep):
     """
 
     # initialization
-    if timestep > 0 and timestep < 50000:
+    if timestep >= 0 and timestep <= 50000:
         iterations = 50000
         dump_interval = 50
         directory = ".\\dump\\young\\"
@@ -65,12 +65,14 @@ def plot_voronoi(timestep):
     for given timestep (averaged over all dump files)
     """
     
-    voronoi_area, voronoi_amount = avg_voronoi(timestep)
+    voronoi_area, voronoi_amount = avg_voronoi(timestep))
 
-    plt.hist(voronoi_area, bins=50)
+    plt.hist(voronoi_area, bins=20)
     plt.title("Voronoi area")
     plt.show()
 
     plt.hist(voronoi_amount, bins=10)
     plt.title("Voronoi amount")
     plt.show()
+
+plot_voronoi(50)
