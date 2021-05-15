@@ -356,6 +356,11 @@ def plot_rdf(r, gr, title):
     plt.show()
 
 def calc_voronoi_peaks(timesteps):
+    """
+    Calculates the magnitude and count of the first two peaks of the voronoi area 
+    histogram and of the amount of voronoi edges histogram for each timestep. Returns
+    these in numpy arrays for all timesteps.
+    """
 
     area_peak1_count, area_peak2_count = np.zeros(len(timesteps)), np.zeros(len(timesteps))
     area_peak1_mag, area_peak2_mag = np.zeros(len(timesteps)), np.zeros(len(timesteps))
@@ -397,9 +402,6 @@ def calc_voronoi_peaks(timesteps):
            area_peak1_mag, area_peak2_mag, 
            amount_peak1_count, amount_peak2_count, 
            amount_peak1_mag, amount_peak2_mag
-
-
-
 
 
 def save_load(func, savename):
