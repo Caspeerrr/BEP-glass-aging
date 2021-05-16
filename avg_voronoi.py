@@ -7,7 +7,8 @@ from data_process import *
 from init import *
 import os
 from progress.counter import Counter
-
+import sys
+import numpy as np
 
 def avg_voronoi(timestep):
     """
@@ -35,14 +36,14 @@ def avg_voronoi(timestep):
 
     timestep = int(timestep / dump_interval)
     amount = 0
-    counter = Counter('Calculating file ')
 
     # iterate through dump files
     for file in os.listdir(os.fsencode(directory)):
         filename = os.fsdecode(file)
         if filename.endswith(extension): 
 
-            counter.update()
+            print("Calculating file " + str(amount) + ' for timestep ' + str(timestep), sep=' ', end='\r', file=sys.stdout, flush=False)
+
             _, types, _, _, vor_area, vor_amn, Data = read_data(directory + filename, iterations, dump_interval)
             
             if amount == 0:
@@ -59,20 +60,51 @@ def avg_voronoi(timestep):
 
     return voronoi_area, voronoi_amount
 
-def plot_voronoi(timestep):
+def plot_voronoi(timestep_list):
     """
-    Plots histograms of the voronoi area and the amount of voronoi edges
-    for given timestep (averaged over all dump files)
+    Plots histograms as line graphs of the voronoi area and the amount of voronoi edges
+    for given timesteps (averaged over all dump files)
     """
     
-    voronoi_area, voronoi_amount = avg_voronoi(timestep)
+    voronoi_area_list = []
+    voronoi_amount_list = []
+    for timestep in timestep_list:
+        voronoi_area, voronoi_amount = avg_voronoi(timestep)
+        voronoi_area_list.append(voronoi_area)
+        voronoi_amount_list.append(voronoi_amount)
 
-    plt.hist(voronoi_area, bins=20)
-    plt.title("Voronoi area")
+    i = 0
+    for timestep in timestep_list:
+        
+        voronoi_area = voronoi_area_list[i]
+        values, bins = np.histogram(voronoi_area, bins=20)
+        bin_centers = 0.5*(bins[1:]+bins[:-1])
+
+        plot_label = "t =" + str(timestep)
+        plt.plot(bin_centers, values, label=plot_label)
+        i += 1
+
+    plt.legend()
+    plt.xlabel('Voronoi area')
+    plt.ylabel('frequency')
+    plt.title("Histogram of Voronoi area")
     plt.show()
 
-    plt.hist(voronoi_amount, bins=10)
-    plt.title("Voronoi amount")
+    i = 0
+    for timestep in timestep_list:
+        
+        voronoi_amount = voronoi_amount_list[i]
+        values, bins = np.histogram(voronoi_amount, bins=20)
+        bin_centers = 0.5*(bins[1:]+bins[:-1])
+
+        plot_label = "t =" + str(timestep)
+        plt.plot(bin_centers, values, label=plot_label)
+        i += 1
+
+    plt.legend()
+    plt.xlabel('Voronoi edges')
+    plt.ylabel('frequency')
+    plt.title("Histogram of amount of Voronoi edges")
     plt.show()
 
-plot_voronoi(50)
+plot_voronoi([100, 1000, 4000000, 5000000])
