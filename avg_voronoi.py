@@ -42,7 +42,7 @@ def avg_voronoi(timestep):
         filename = os.fsdecode(file)
         if filename.endswith(extension): 
 
-            print("Calculating file " + str(amount) + ' for timestep ' + str(timestep), sep=' ', end='\r', file=sys.stdout, flush=False)
+            print("Calculating file " + str(amount) + ' for timestep ' + str(timestep * dump_interval), sep=' ', end='\r', file=sys.stdout, flush=False)
 
             _, types, _, _, vor_area, vor_amn, Data = read_data(directory + filename, iterations, dump_interval)
             
