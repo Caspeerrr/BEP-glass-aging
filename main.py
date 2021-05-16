@@ -28,7 +28,7 @@ if Binary_classification:
         filename = os.fsdecode(file)
         if filename.endswith(".YOUNG"): 
 
-            featuresNew = extract_features(".\\dump\\young\\", filename, 50000, 50)[0]
+            featuresNew = extract_features(".\\dump\\young\\", filename, 50000, 50)
             timestepsNew = np.zeros(len(featuresNew))
 
             features.append(featuresNew)
@@ -39,7 +39,7 @@ if Binary_classification:
         filename = os.fsdecode(file)
         if filename.endswith(".OLD"): 
 
-            featuresNew = extract_features(".\\dump\\old\\", filename, 1000000, 1000)[0]
+            featuresNew = extract_features(".\\dump\\old\\", filename, 1000000, 1000)
             timestepsNew = np.ones(len(featuresNew))
 
             features.append(featuresNew)
@@ -53,7 +53,7 @@ if Linear_regression:
         filename = os.fsdecode(file)
         if filename.endswith(".ATOM"): 
 
-            featuresNew = extract_features(".\\dump\\full\\", filename, 5000000, 1000)[0]
+            featuresNew = extract_features(".\\dump\\full\\", filename, 5000000, 1000)
             timestepsNew = np.zeros(len(featuresNew))
 
             features.append(featuresNew)
@@ -68,6 +68,8 @@ if Linear_regression:
     linear_regression(features, timesteps, params['test_ratio'], degree=3)
 
 if Binary_classification:
+    print(len(features))
+    print(len(timesteps))
     logistic_regression(features, timesteps, params['test_ratio'])
     
 if Visualisation:
