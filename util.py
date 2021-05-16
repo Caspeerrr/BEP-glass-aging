@@ -412,3 +412,31 @@ def save_load(func, savename):
             np.save(f, result)
 
     return result
+
+
+def calc_SF(rdf):
+    """
+    calculates the structure factor by taking the fourier transform of the rdf
+    @param :rdf: radial distribution function of a single timestep
+    @returns : SF_AA, SF_BB, SF_AB
+    """
+    dr = params['dr']
+    rmax = params['rmax']
+    density = params['density']
+    SF_AA, SF_BB, SF_AB = [], [], []
+
+    for q in np.arange(dr, rmax, dr):
+        sum_AA, sum_BB, sum_AB = 0, 0, 0
+        incre = 0
+        
+        for r in np.arange(dr, rmax, dr):
+            incre += 1
+            sum_AA += r * (rdf[0][incre][0] - 1) * np.sin(q * r)
+            sum_BB += r * (rdf[1][incre][0] - 1) * np.sin(q * r)
+            sum_AB += r * (rdf[2][incre][0] - 1) * np.sin(q * r)
+
+        SF_AA.append(1 + 4 * np.pi * density * sum_AA * dr / q)
+        SF_BB.append(1 + 4 * np.pi * density * sum_BB * dr / q)
+        SF_AB.append(1 + 4 * np.pi * density * sum_AB * dr / q)
+    
+    return SF_AA, SF_BB, SF_AB
